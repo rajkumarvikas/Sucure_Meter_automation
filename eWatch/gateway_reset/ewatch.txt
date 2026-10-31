@@ -1,0 +1,42 @@
+cmd : python -m playwright codegen --target python --ignore-https-errors -o recorded.py https://msedclpq.ewatch.online:12008/
+
+
+
+Python plus these packages:
+bat
+  pip install playwright pandas openpyxl
+  playwright install chromium
+
+Files, kept in one folder (like gateway_reset)
+
+ewatch_bulk.py
+gateway.xlsx: Sheet1 must have exactly these columns: Sr. No., Gateway S. No., Substation name. The substation names must match how they appear on the site, 		because the script searches by name.
+
+You also need
+
+Your site login (the script does not store it) and the ability to enter the captcha yourself.
+
+Before each run
+
+Delete or rename the old result.xlsx if you want a completely fresh run. If it stays, the script resumes and skips every gateway already marked OK or ERROR.
+Keep or move the old screenshots folder. A new run with the same substation and gateway names will overwrite files with the same name.
+Close result.xlsx in Excel.
+Check the settings at the top of the script:
+TEST_MODE = True runs only the first 3 substations, good for a trial.
+RETRY_POPUP_ERRORS = True retries gateways that showed an error popup.
+ALREADY_DONE = [...] lists gateways to skip.
+Double-check the gateway list in the Excel. The script clicks Yes on every reset, which erases the gateway’s data.
+
+To run it
+
+bat
+cd C:\Users\Vikas Kumar\Desktop\gateway_reset
+python ewatch_bulk.py
+
+Log in in the browser, enter the captcha, and leave the window open. When it finishes, check result.xlsx (Status and Remark) and the screenshots folder.
+
+When it might break
+
+If the website changes a button or menu name (for example Sync data, reset, Yes, Ok/Done, Back to substation) or its address, the script will fail on that step. The terminal message and the ERROR_...png screenshot will show where.
+If the task is different next time (not a reset), record the new steps with python -m playwright codegen --target python --ignore-https-errors -o recorded.py https://msedclpq.ewatch.online:12008/ and share the recorded code. The same login, loop, screenshot and Excel parts can then be reused.
+
